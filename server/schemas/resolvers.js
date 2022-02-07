@@ -2,7 +2,11 @@ const {Book, User} = require('../models')
 const { authMiddleware } = require('../../utils/auth');
 //querries
 const resolvers ={
-    Query: {},
+    Query: {
+        userProfile: async () => {
+            
+        }
+    },
     Mutations: {
         createUser: async () => {
             const newUser = await User.create(args)
@@ -11,10 +15,12 @@ const resolvers ={
         login: async () => {
 
         },
-    getSingleUser: async () =>{
-        const getSingleUser = await User.findOne(
-            {authMiddleware}
-        )
-    }}
+        saveBook: async () =>{
+
+        },
+        deleteBook: async () => {
+
+        }
+    }
 }
 module.exports = resolvers;
