@@ -16,11 +16,17 @@ savedBooks: [bookSchema]}
 
 type withAuth {
 token: ID!
-user:User}
+user:User
+}
 
 type Query {
-userProfile: User}
+userProfile: User
+}
 
 type Mutations {
+createUser()
+login()
+saveBook()
+deleteBook()
 }`
 module.exports = typeDefs;
