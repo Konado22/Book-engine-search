@@ -1,5 +1,6 @@
 const {Book, User} = require('../models')
-const { authMiddleware } = require('../../utils/auth');
+const {signToken} = require('../utils/auth')
+const {AuthenticationError} = require('apollo-server-express')
 //querries
 const resolvers ={
     Query: {
@@ -13,7 +14,17 @@ const resolvers ={
             return newUser
         },
         login: async (parent, args) => {
-            const login = await User.findOne({email: args.email})
+            const loggedInUser = await User.findOne({email: args.email})
+            if (!loggedInUser) {
+            throw new AuthenticationError("please login")
+            }
+            const isCorrectPassword = await loggedInUser.isCorrectPassword(args.password)
+
+            if (!isCorrectPassword){
+                throw new AuthenticationError("incorrect login credentials please try again")
+            }
+            const loginToken = signToken(loggedInUser)
+            return {loginToken, loggedInUser}
 
         },
         saveBook: async (parent, args, context) =>{
