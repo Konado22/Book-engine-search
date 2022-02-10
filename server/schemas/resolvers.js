@@ -4,9 +4,15 @@ const {AuthenticationError} = require('apollo-server-express')
 //querries
 const resolvers ={
     Query: {
-        userProfile: async (parent, args) => {
-            
+        userProfile: async (parent, args, context) => {
+            if (context.user) {
+                const userData = await User.findOne({ _id: context.user._id }).select(
+                    "-__v -password"
+                );
+                return userData;
         }
+        throw new AuthenticationError("Login required")}
+        
     },
     Mutations: {
         createUser: async (parent, args) => {
