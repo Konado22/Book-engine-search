@@ -16,8 +16,12 @@ const resolvers ={
     },
     Mutations: {
         createUser: async (parent, args) => {
-            const newUser = await User.create(args)
-            return newUser
+            const userBody = {email: args.email,
+            password: args.password,
+            username: args.username}
+            const newUser = await User.create(userBody)
+            const token = signToken(newUser)
+            return {newUser, token}
         },
         login: async (parent, args) => {
             const loggedInUser = await User.findOne({email: args.email})
@@ -29,8 +33,8 @@ const resolvers ={
             if (!isCorrectPassword){
                 throw new AuthenticationError("incorrect login credentials please try again")
             }
-            const loginToken = signToken(loggedInUser)
-            return {loginToken, loggedInUser}
+            const token = signToken(loggedInUser)
+            return {token, loggedInUser}
 
         },
         saveBook: async (parent, args, context) =>{
