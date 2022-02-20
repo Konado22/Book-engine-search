@@ -1,5 +1,3 @@
-// use this to decode a token and get the user's information out of it
-const jwt = require('jsonwebtoken');
 import decode from 'jwt-decode';
 
 // create a new class to instantiate for a user
@@ -21,6 +19,7 @@ class AuthService {
     try {
       const decoded = decode(token);
       if (decoded.exp < Date.now() / 1000) {
+        localStorage.removeItem('id_token');
         return true;
       } else return false;
     } catch (err) {
@@ -48,3 +47,8 @@ class AuthService {
 }
 
 export default new AuthService();
+
+
+
+
+
