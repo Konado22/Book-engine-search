@@ -11,7 +11,6 @@ export const ADD_USER = gql`
     }
   }
 `;
-// why BookInput? Remember your typeDefs mutation values...
 export const SAVE_BOOK = gql`
   mutation saveBook($bookData: BookInput!) {
     saveBook(bookData: $bookData) {
