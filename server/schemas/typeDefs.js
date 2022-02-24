@@ -1,32 +1,45 @@
 const { gql } = require('apollo-server-express');
+
+//savedBooks = this will be an array of the Book type
+// ! means this field value can never be bull
 const typeDefs = gql`
-type Book{
-authors: [String]
-description: String!
-bookId: String!
-image: String!
-link: String!
-title: String!}
-
-type User {
-username: String!
-email: String!
-password: String!
-savedBooks: [Book]}
-
-type withAuth {
-token: ID!
-user:User
+  type User {
+    _id: ID!
+    username: String!
+    email: String!
+    bookCount: Int
+    savedBooks: [Book]
+  }
+  type Book {
+    bookId: ID!
+    authors: [String]
+    description: String!
+    title: String!
+    image: String
+    link: String
+  }
+  type Auth {
+    token: ID!
+    user: User
+  }
+  type Query {
+    me: User
+  }
+  #input type to handle all these parameters
+  input BookInput {
+  authors: [String]
+  description: String!
+  title: String!
+  bookId: String!
+  image: String
+  link: String
 }
-
-type Query {
-userProfile: User
+  type Mutation {
+  createUser(username: String!, email: String!, password: String!): Auth
+  saveBook(bookData: BookInput!): User
+  deleteBook(bookId: ID!): User
+  login(email: String!, password: String!): Auth
 }
+`;
 
-type Mutations {
-createUser(username: String!, email: String!, password: String!): withAuth
-login(username: String!, password: String!): withAuth
-saveBook(bookId:String!): User
-deleteBook(bookId: ID!): User
-}`
 module.exports = typeDefs;

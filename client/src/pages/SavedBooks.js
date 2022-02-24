@@ -1,21 +1,17 @@
-import React from "react";
-import {
-  Jumbotron,
-  Container,
-  CardColumns,
-  Card,
-  Button,
-} from "react-bootstrap";
-import { useQuery, useMutation } from "@apollo/client";
-import { GET_ME } from "../utils/queries";
-import { REMOVE_BOOK } from "../utils/mutations";
-import Auth from "../utils/auth";
-import { removeBookId, saveBookIds } from "../utils/localStorage";
+import React from 'react';
+import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
+import { useQuery, useMutation } from '@apollo/client';
+import Auth from '../utils/auth';
+import { GET_ME } from '../utils/queries';
+import { REMOVE_BOOK } from '../utils/mutations';
+import { removeBookId, saveBookIds } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  const [deleteBook, { error }] = useMutation(REMOVE_BOOK);
-  const { loading, data } = useQuery(GET_ME);
-  const userData = data?.matchups || [];
+  const {loading, data } = useQuery(GET_ME); 
+  const userData = data?.me || {};
+
+  const [deleteBook, {error}] = useMutation(REMOVE_BOOK);
+  // const userDataLength = Object.keys(userData).length;
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
@@ -28,20 +24,22 @@ const SavedBooks = () => {
       const { data } = await deleteBook({
         variables: { bookId },
       });
+console.log(bookId)
 
-      // upon success, remove book's id from localStorage
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
     }
   };
-  const savedBookIds = userData.savedBooks.map((book) => book.bookId);
-  saveBookIds(savedBookIds);
 
   // if data isn't here yet, say so
   if (loading) {
-    return <h2>LOADING...</h2>;
+    return <h2>LOADING...hold on...</h2>;
   }
+
+    // sync localStorage with what was returned from the userData query
+    const savedBookIds = userData.savedBooks.map((book) => book.bookId);
+    saveBookIds(savedBookIds);
 
   return (
     <>
